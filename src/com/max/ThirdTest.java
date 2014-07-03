@@ -7,47 +7,71 @@
 Должен быть реализован механизм разбиения данной таблицы на страницы с заданным количество строк
 (должно возвращаться общее количество страниц и получение итератора на данную страницу).
 К реализации написать тесткейсы с помощью JUnit и консольный интерфейс с примером использования*/
-package com.max;
-import java.util.*;
-import java.util.Comparator;
-import java.util.Collections;
+package com.max;/*
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-    class Table  {
-       public String column;
-       public String line;
-
-        Table(String column, String line) {
-            this.column = column;
-            this.line = line;
-        }
-        public String getLine(){
-            return line;
-        }
-
-        public void add(String a,String b){
-            this.column=a;
-            line+=" "+b;
-        }
-    }
-public class ThirdTest{
+public class ThirdTest {
     public static void main(String[] args) {
-        Table table=new Table("123","321");
-        Table table1=new Table("12345","54321");
-        table.add("123","555654654");
-        table.add("123","77777");
-        table1.add("13456","654321");
-
-        String maks=table.getLine();
-        System.out.println(maks);
+        Map<String,Table> staff=new HashMap<String, Table>();
+        staff.put("111",new Table());
+        staff.put("222",new Table());
+        staff.put("333",new Table());
+        staff.put("444",new Table());
+        System.out.println("staff="+staff);
     }
 }
+class Table  {
+    private String name;
+    private ArrayList arrayList;
+    public Table() {
+    }
+    public String toString(){
+        return "[name="+name+", arrayList="+arrayList+"]";
+    }
+    public ArrayList add(ArrayList a,String n){
+        name=n;
+        arrayList=a;
+        return  arrayList;
+    }
+}
+*/
 
+import java.util.LinkedHashMap;
 
+class Table  {
+    public String column;
+    public String line;
 
+    Table(String column, String line) {
+        this.column = column;
+        this.line = line;
+    }
+    public String getLine(){
+        return line;
+    }
+    public void add(String a,String b){
+        this.column=a;
+        line+=" "+b;
+    }
+}
+public class ThirdTest{
+    public static void main(String[] args) {
+        LinkedHashMap map=new LinkedHashMap<String,String>();
+        map.put("111","99999");
+        map.put("111","88888");
+        map.put("222","77777");
+        map.put("222","44444");
 
+        Table table=new Table("123","321");
+        table.add("123","555654654");
+        table.add("123","77777");
+        System.out.println(table.getLine());
 
-
-
+        System.out.println("map="+map);
+    }
+}
 /*
 ************************************************************************************************************
 //массив объектов
