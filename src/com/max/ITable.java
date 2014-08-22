@@ -3,7 +3,6 @@ package com.max;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 /**
  * .
  *
@@ -11,14 +10,14 @@ import java.util.Map;
  */
 public interface ITable {
 
-    void add(Map<String, String> row);
+    void add(Map<String,String> row);
 
     void sort(String sortBy);
 
     int size();
 
-    List<Map<String, String>> getPage(int page, int pageSize);
+    void getPage(int page, int el);
 
-    Iterator<Map<String, String>> getPageIterator(int page, int pageSize);
+    void getPageIterator(int page, int el);
 
 }

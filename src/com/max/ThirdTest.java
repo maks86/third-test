@@ -3,83 +3,139 @@
 Каждая колонка таблицы характеризуется строковым названием (ключ объекта Map)
 Добавлять строки в данную таблицу можно с помощью метода add(Map map)
 Для данной таблицы должно быть возможно указывать порядок сортировки по заданной колонке
-
-Должен быть реализован механизм разбиения данной таблицы на страницы с заданным количество строк
+Должен быть реализован механизм    разбиения данной таблицы на страницы с заданным количество строк
 (должно возвращаться общее количество страниц и получение итератора на данную страницу).
 К реализации написать тесткейсы с помощью JUnit и консольный интерфейс с примером использования*/
-package com.max;/*
-import java.util.ArrayList;
+package com.max;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ThirdTest {
-    public static void main(String[] args) {
-        Map<String,Table> staff=new HashMap<String, Table>();
-        staff.put("111",new Table());
-        staff.put("222",new Table());
-        staff.put("333",new Table());
-        staff.put("444",new Table());
-        System.out.println("staff="+staff);
+class Table implements ITable {
+    List<Map<String, String>> maps  = new LinkedList<Map<String, String>>();
+    @Override
+    public void add(Map<String,String> row) {
+           maps.add(row);
+        for (Map.Entry<String, String> me : row.entrySet()) {
+             System.out.print(me.getKey() + ": ");
+             System.out.println(me.getValue());
+        }
+//        String value = map.get(key);
+//       System.out.println("value="+value);
+//        map.put(key, value + "!!!!");
+//        System.out.println(key +"="+ map.get(key);
     }
-}
-class Table  {
-    private String name;
-    private ArrayList arrayList;
-    public Table() {
+    @Override
+    public void sort(String sortBy) {
+        System.out.println("Sorting in the " + sortBy + " :");
+        List <String> str=new ArrayList<String>();
+        for (Map<String, String> pair : maps) {
+            if (pair.containsKey(sortBy)) {
+                System.out.println(sortBy +" contains:" + pair.values());
+                str.add(String.valueOf(pair.values()));
+                Collections.sort(str);
+            }
+        }System.out.println("sort=" + str);
+        System.out.println("-------------");
     }
-    public String toString(){
-        return "[name="+name+", arrayList="+arrayList+"]";
+    @Override
+    public int size() {
+        System.out.println("maps.size()="+maps.size());
+        System.out.println("-------------");
+        return maps.size();
     }
-    public ArrayList add(ArrayList a,String n){
-        name=n;
-        arrayList=a;
-        return  arrayList;
-    }
-}
-*/
 
-import java.util.LinkedHashMap;
+    @Override
+    public void getPage(int page, int el) {
+//        entryList = new ArrayList(map.entrySet());
+//        Collections.sort(entryList, new Comparator() {
+//            public int compare(Object o1, Object o2) {
+//                Map.Entry e1 = (Map.Entry) o1;
+//                Map.Entry e2 = (Map.Entry) o2;
+//                Comparable c1 = (Comparable) e1.getValue();
+//                Comparable c2 = (Comparable) e2.getValue();
+//
+//                return c1.compareTo(c2);
+//            }
+//        });
+        System.out.println("Pagination Value:");
+        int mapsSize = maps.size();
+        double allPage = Math.ceil((double)mapsSize/page);//по allPage(строк) на 1 стр.
 
-class Table  {
-    public String column;
-    public String line;
+        if (mapsSize < page){ // просто вывести...
+            for (int i=0; i<mapsSize; i++){
+                System.out.println(maps.get(i));
+            }
+        }
+        if (allPage<el){
+            System.out.println("Cause is not possible, Maximum number of items per page: " + allPage);
+        }
+        else{
+            if (mapsSize >= page){
+                System.out.println("Total number of pages: " + mapsSize);
+                System.out.println("Possible to infer on " + page + " page " + el + " elements");
+            }System.out.println("-------------");
+        }
+    }
+    @Override
+    public void getPageIterator(int page, int el) {
+        int mapsSize = maps.size();
+        int count=0;
+        double allPage = Math.ceil((double)mapsSize/page);//по allPage(строк) на 1 стр.
 
-    Table(String column, String line) {
-        this.column = column;
-        this.line = line;
-    }
-    public String getLine(){
-        return line;
-    }
-    public void add(String a,String b){
-        this.column=a;
-        line+=" "+b;
+        if (mapsSize < page){ // simply print the contents of
+            for (int i=0; i<mapsSize; i++){
+                System.out.println(maps.get(i));
+            }
+        }
+        if (allPage<el){
+            System.out.println("Cause is not possible, Maximum number of items per page: " + allPage);
+        }
+        else{
+            if (mapsSize >= page){
+                count = (el*page)-el;
+                System.out.println("Output begins with " + (count+1) + " element ");
+                for (int i=0; i<el; i++){
+                    System.out.println(maps.get(count));
+                    count++;
+                    if (count==maps.size()){
+                        return;
+                    }
+                }
+            }
+        }
     }
 }
 public class ThirdTest{
     public static void main(String[] args) {
-        LinkedHashMap map=new LinkedHashMap<String,String>();
-        map.put("111","99999");
-        map.put("111","88888");
-        map.put("222","77777");
-        map.put("222","44444");
+        Map<String,String> row1=new HashMap<String, String>();
+        row1.put("column1","row1");
 
-        Table table=new Table("123","321");
-        table.add("123","555654654");
-        table.add("123","77777");
-        System.out.println(table.getLine());
+        Table table=new Table();
+        table.add(row1);
 
-        System.out.println("map="+map);
+        Map<String,String> row2=new HashMap<String, String>();
+        row2.put("column2","row2");
+        table.add(row2);
+
+        Map<String,String> row3=new HashMap<String, String>();//можно убрать...
+        row3.put("column1","row3");
+        table.add(row3);
+
+        table.size();
+
+        table.sort("column1");
+
+        table.getPage(3,1);//page, el
+        table.getPageIterator(3,1);
     }
-}
-/*
+}/*
 ************************************************************************************************************
 //массив объектов
 int[] a = new int[] {1, 2};
 //перебор элементов
 for (int i = 0; i < myArray.length; i++) {
 for (long val : myArray)
-
 Collection – группа объектов, Map – ассоциативный массив объектов
 Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 	map.put(5, 42);
@@ -105,6 +161,9 @@ for (Iterator iter = collection.iterator(); iter.hasNext();) {
             element.doSome();}
 //ArrayList реализует интерфейс java.util.RandomAccess
 операции по произвольному доступу к нему осуществляются быстрее
+
+
+
 //Добавить и взять значения
  ArrayList list = new ArrayList();
      for (int i=0; i<100000; i++)
@@ -130,6 +189,9 @@ LinkedList list2 = new LinkedList();
          i.next();
      System.out.println(System.currentTimeMillis()-a);
 //HashSet произвольном порядке, LinkedHashSet в порядке их добавления
+
+
+
 //Set sorted = new TreeSet();
 sorted.add(new Integer(2));
 sorted.add(new Integer(3));
@@ -148,15 +210,13 @@ public class Employee implements Comparable{
 		else
 			return (salary > otherSalary) ? 1 : -1;
 	}
-
 	public static void main(String[] args) {
 		Set emps = new TreeSet();
 		emps.add(new Employee("Vasya", 500));
 		emps.add(new Employee("Sanya", 1000));
 		emps.add(new Employee("Petya", 300));
 		System.out.println(emps); // Распечатает [Petya: 300, Vasya: 500, Sanya: 1000]
-	}
-}
+	}}
 //когда compareTo() переопределен но еще сортировка
 создается класс реализующий интерфейс Comparator, и уже на основании объекта сортировка
 реализовать метод compare(Object o1, Object o2)
@@ -175,6 +235,7 @@ Map<String, String> map = new HashMap <String, String>();
    map.put("four", "333");
   // Получить и вывести все ключи
   System.out.println("Set of keys: " + map.keySet());
+
    // Получить и вывести значение по ключу
    String val = map.get("one");
    System.out.println("one=" + val);
@@ -184,10 +245,10 @@ Map<String, String> map = new HashMap <String, String>();
   System.out.println("Set of entries: " + map.entrySet());
 
 //Map.Entry позволяет работать с объектом, который представляет собой пару <ключ, значение>
-boolean equals(Object o)  - проверяет эквивалентность двух пар
+boolean equals(Object o)  - проверяет эквивалентность двух пар
 Object getKey() – возвращает ключ пары.
 Object getValue() – возвращает значение пары.
-Object setValue(Object value) – изменяет значение пары
+Object setValue(Object value) – изменяет значение пары
 Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 		map.put("one", 1);
 		map.put("two", 2);
@@ -202,80 +263,5 @@ Object[] arr = myList.toArray();
 создает массив типа Object[] и копирует в него все элементы
 String[] strings = (String [])myList.toArray(new String[myList.size()])
 копирует элементы в переданный массив и возвращает его
-*************************************************************************************************************
-
-
-
-  Map<String,ArrayList<String>> map= new HashMap<String, ArrayList<String>>();
-        map.put("111", new ArrayList<String>());
-        map.put("222", new ArrayList<String>());
-        map.put("333", new ArrayList<String>());
-        map.put("444", new ArrayList<String>());
-        System.out.println(map);
-        map.remove("222"); //удалить
-        //staff.put("444",new Table("Francesca Miller"));
-       // System.out.println(staff.get("444"));
-        for (Map.Entry<String,ArrayList<String>> entry : map.entrySet()){
-            String key=entry.getKey();
-            ArrayList value=entry.getValue();
-            System.out.println("key="+key+", value="+value);
-        }
-
-class StringLengthComparator implements Comparator<String> {
-    @Override
-    public int compare(String s1, String s2) {
-        int len1 = s1.length();
-        int len2 = s2.length();
-
-        if (len1 > len2) {
-            return 1;
-        } else if (len1 < len2) {
-            return -1;
-        }
-        return 0;
-    }
-    public static void main(String[] args) {
-        LinkedHashMap<String, ArrayList> map = new LinkedHashMap<String, ArrayList>();
-        ArrayList<String> page1 = new ArrayList<String>();
-        ArrayList<String> page2 = new ArrayList<String>();
-        ArrayList<String> page3 = new ArrayList<String>();
-        map.put("one column", page1);
-        map.put("two column", page2);
-        map.put("three column", page3);
-
-        page1.add("second string1");
-        page1.add("third string1");
-
-        page2.add("second string2");
-        page2.add("third string2");
-
-        page3.add("second string3");
-        page3.add("first string3"); //adding link
-
-        page1.add("first string1"); //adding at key
-        page2.add("first string2");
-        page3.add("third string3");
-        System.out.println(map);
-        Collections.sort(map.get("three column"));      //sorting by column (by the specified key)
-        Collections.sort(page1);                         //Sorting link
-        Collections.sort(page2);
-        System.out.println(page1);
-        System.out.println(page2);
-        System.out.println(page3);
-        Collections.sort(test, new StringLengthComparator());   //sorting by string length
-        for (String t : test) {
-            System.out.println(t);
-        }
-        System.out.println("---------------------");
-  }
+************************************************************************************************************
 */
-
-
-
-
-
-
-
-
-
-
